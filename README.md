@@ -10,5 +10,9 @@ Further study is I tried to find similar solution in java, but there is no built
 
 
 
+
 2. Design Question: Design A Google Analytic like Backend System.
+
+See the image file.
+
    
