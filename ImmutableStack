@@ -1,61 +1,64 @@
 
-import java.util.*;  
+import java.util.EmptyStackException;
 
-public final class ImmutableQueue<T> {
+public final class ImmutableStack<T>  {
 	
-	
-	    private final ImmutableStack<T> inStack;  
-	    private final ImmutableStack<T> outStack;  
 	    private final int size;
-	      
-	    public ImmutableQueue() { 
-	    	size = 0;
-	        inStack = null;  
-	        outStack = null;  
+	    private final T head;
+	    private final ImmutableStack<T> tail; 
+
+	    public ImmutableStack() {
+	        size = 0;
+	        tail = null;
+	        head = null;
+	    }
+	    private ImmutableStack(T h, ImmutableStack<T> t) {  
+	    	head = h;  
+	        tail = t;  
+	        size = tail.size() + 1;  
 	    }  
 	    
-	    private ImmutableQueue(ImmutableStack<T> in, ImmutableStack<T> out) {  
-	        inStack = in;  
-	        outStack = out;  
-	        size = inStack.size() + outStack.size();
+	    public ImmutableStack<T> push(T ele) {
+	        if (ele == null)
+	            throw new NullPointerException();
+	        else
+		        return new ImmutableStack<T>(ele, this);
+	    }
+	    
+	    //usually it should return 2 values(head + trail) but to simplify just return tail stack
+	    public ImmutableStack<T> pop() {
+	        if (size == 0)
+	            throw new EmptyStackException();
+	        return tail;
+	    }
+	    
+	    public T peek() {
+	        if (size == 0)
+	            throw new EmptyStackException();
+	        return head;
+	    }
+	    
+	    public int size() {
+	        return size;
+	    }
+	    
+	    public boolean isEmpty() {
+	    	return size==0;
+	    }
+	    
+	    public ImmutableStack<T> reverse() {  
+	    	ImmutableStack<T> st = new ImmutableStack<T>();  
+	        if (isEmpty()) 
+	            return st;  
+	        //reverse the stack by traversing 
+	        ImmutableStack<T> temp = this;  
+	        while (!temp.isEmpty()) {  
+	            st = st.push(temp.peek());  
+	            temp = temp.pop();  
+	        }  
+	        return st;  
+	          
 	    }  
-	      
-	     public ImmutableQueue<T> enQueue(T t) {  
-	         if (t == null) 
-	             throw new NullPointerException();  
-	         return new ImmutableQueue<T>(inStack.push(t), outStack);  
-	     }  
-	       
-	     public ImmutableQueue<T> deQueue() {  
-	         if (isEmpty()) 
-	             throw new EmptyStackException();  
-	         if (size == 1) 
-	             return new ImmutableQueue<T>();  
-	         //if out stack is empty and size>1 then use reversed in stack to pop and used it as out stack, in stack sets to empty
-	         if (outStack.isEmpty()) {  
-	             ImmutableStack<T> temp = inStack.reverse();  
-	             return new ImmutableQueue<T>(new ImmutableStack<T>(),temp.pop());  
-	         }  
-	        return new ImmutableQueue<T>(inStack, outStack.pop());  
-	     }  
-	       
-	      public T head() {  
-	          if (isEmpty())
-	              throw new NoSuchElementException();  
-	          //out stack empty, use reversed in stack and get the head
-	          if (outStack.isEmpty()) {  
-	              ImmutableStack<T> temp = inStack.reverse();  
-	              return temp.peek();  
-	          }  
-	          return outStack.peek();  
-	      }  
-	      
-	       public int size() {  
-	          return size;  
-	       }  
-	         
-	       public boolean isEmpty() {  
-	           return size==0;  
-	       }  
-	         
+
+
 }
